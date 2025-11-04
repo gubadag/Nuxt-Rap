@@ -1,425 +1,444 @@
 <template>
-    <div class="artist-list">
-        <h1>🎧 Artist Library</h1>
+  <div class="artist-list">
+    <h1>🎧 Artist Library</h1>
 
-        <h1 class="text-3xl font-bold underline">    Hello world!  </h1>
+    <ul>
+      <li
+          v-for="(artist, index) in artists"
+          :key="index"
+          @click="selectArtist(index)"
+          class="artist-link"
+          :class="{ active: selectedArtistIndex === index }"
+      >
+        {{ artist.name }}
+      </li>
+    </ul>
 
-        <ul>
-            <li
-                v-for="(artist, index) in artists"
-                :key="index"
-                @click="selectArtist(index)"
-                class="artist-link"
+    <!-- All artists' songs pre-rendered but hidden visually -->
+    <div
+        v-for="(artist, artistIndex) in artists"
+        :key="'artist-' + artistIndex"
+        class="artist-songs"
+        :style="{ display: selectedArtistIndex === artistIndex ? 'block' : 'none' }"
+    >
+      <h2>{{ artist.name }}'s Songs</h2>
+
+      <div
+          v-for="(audio, index) in artist.audios"
+          :key="'audio-' + artistIndex + '-' + index"
+          class="eventContent__audio"
+          :ref="el => setSongRef(el, artistIndex, index)"
+      >
+        <div class="audio-info-row">
+          <button class="play-button" @click="togglePlay(artistIndex, index)">
+            <!-- Pause Icon -->
+            <svg
+                v-if="isPlaying && currentArtistIndex === artistIndex && currentAudioIndex === index"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="currentColor"
             >
-                {{ artist.name }}
-            </li>
-        </ul>
+              <path d="M14 19V5h4v14zm-8 0V5h4v14z"/>
+            </svg>
 
-        <div v-if="selectedArtist">
-            <h2>{{ selectedArtist.name }}'s Songs</h2>
-
-            <div
-                v-for="(audio, index) in selectedArtist.audios"
-                :key="index"
-                class="eventContent__audio"
-                :ref="el => setSongRef(el, index)"
+            <!-- Play Icon -->
+            <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="currentColor"
             >
-                <!-- Top Row: Button + Info + Duration -->
-                <div class="audio-info-row">
-                    <!-- Play/Pause Button -->
-                    <button class="play-button" @click="togglePlay(index)">
-                        <Icon
-                            :name="currentAudioIndex === index && isPlaying ? 'material-symbols:pause' : 'material-symbols:play-arrow'"
-                            size="24"
-                        />
-                    </button>
+              <path d="M8 19V5l11 7z"/>
+            </svg>
+          </button>
 
 
-                    <!-- Song Info -->
-                    <div class="audio-meta">
-                        <div class="audio-title">{{ audio.title }}</div>
-                        <div class="audio-author">{{ audio.author }}</div>
-                    </div>
+          <div class="audio-meta">
+            <div class="audio-title">{{ audio.title }}</div>
+            <div class="audio-author">{{ audio.author }}</div>
+          </div>
 
-                    <!-- Duration -->
-                    <div class="audio-duration">
-                        {{ audio.durationText }}
-                    </div>
-                </div>
-
-                <!-- Progress Bar -->
-                <div
-                    class="timeline-bar"
-                    @click="currentAudioIndex === index && isPlaying ? seek(index, $event) : null"
-                >
-                    <div
-                        class="timeline-progress"
-                                        :style="{
-                        width: `${progress[index] || 0}%`,
-                        opacity: currentAudioIndex === index ? 1 : 0.3
-                      }"
-                    ></div>
-                </div>
-
-                <audio
-                    ref="audio"
-                    :src="audio.src"
-                    @ended="onEnded"
-                    @timeupdate="updateProgress(index)"
-                />
-            </div>
-
-        </div>
-        <!-- Fixed Bottom Player Bar -->
-        <div v-if="selectedArtist && currentAudioIndex !== null"
-             class="player-bar"
-             :style="{ backgroundImage: `url(${playerBg.value})` }">
-<!--            {{playerBg}}-->
-            <div class="player-bar-overlay"></div>
-
-            <!-- MOBILE ONLY Meta + Timeline (above controls) -->
-            <div class="mobile-meta-timeline" v-if="selectedArtist && currentAudioIndex !== null">
-                <div class="player-meta">
-                    <div class="meta-title">
-                        {{ selectedArtist.audios[currentAudioIndex].title }}
-                    </div>
-                    <div class="meta-artist">
-                        {{ selectedArtist.audios[currentAudioIndex].author }}
-                    </div>
-                </div>
-                <div
-                    class="timeline-bar"
-                    @click="isPlaying ? seek(currentAudioIndex, $event) : null"
-                >
-                    <div
-                        class="timeline-progress"
-                        :style="{
-                                width: `${progress[currentAudioIndex] || 0}%`,
-                                opacity: 1
-                              }"
-                    ></div>
-                </div>
-            </div>
-
-
-            <!-- Cover + Metadata Block -->
-            <div class="player-info" :class="{ 'visible': !isCurrentSongVisible }">
-                <img
-                    class="player-cover-image"
-                    :src="getImageUrlFromAudioSrc(selectedArtist.audios[currentAudioIndex].src)"
-                    alt="Cover"
-                    @error="handleImageError"
-                />
-                <div class="player-meta">
-                    <div class="meta-title">{{ selectedArtist.audios[currentAudioIndex].title }}</div>
-                    <div class="meta-artist">{{ selectedArtist.audios[currentAudioIndex].author }}</div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <div
-                class="controls"
-                :class="{ 'shifted': !isCurrentSongVisible }"
-            >
-                <button @click="prevSong">
-                    <Icon name="material-symbols:skip-previous-rounded" size="28" />
-                </button>
-
-                <button @click="seekRelative(-10)">
-                    <Icon name="material-symbols:replay-10-rounded" size="28" />
-                </button>
-
-                <button class="main-play-btn" @click="togglePlay(currentAudioIndex)">
-                    <Icon
-                        :name="isPlaying ? 'material-symbols:pause-circle-rounded' : 'material-symbols:play-circle-rounded'"
-                        size="44"
-                    />
-                </button>
-
-                <button @click="seekRelative(10)">
-                    <Icon name="material-symbols:forward-10-rounded" size="28" />
-                </button>
-
-                <button @click="nextSong">
-                    <Icon name="material-symbols:skip-next-rounded" size="28" />
-                </button>
-            </div>
-
-            <div class="space"></div>
+          <div class="audio-duration">{{ audio.durationText }}</div>
         </div>
 
+        <div
+            class="timeline-bar"
+            @click="isPlaying && currentArtistIndex === artistIndex && currentAudioIndex === index ? seek(artistIndex, index, $event) : null"
+        >
+          <div
+              class="timeline-progress"
+              :style="{
+              width: `${progress[artistIndex]?.[index] || 0}%`,
+              opacity: currentAudioIndex === index && currentArtistIndex === artistIndex ? 1 : 0.3
+            }"
+          ></div>
+        </div>
 
-
-
+        <audio
+            :ref="el => setAudioRef(el, artistIndex, index)"
+            preload="none"
+            :src="audio.src"
+            @ended="onEnded"
+            @timeupdate="updateProgress(artistIndex, index)"
+        />
+      </div>
     </div>
+
+    <!-- Fixed Bottom Player -->
+    <div v-if="currentArtistIndex !== null && currentAudioIndex !== null" class="player-bar">
+
+      <div class="player-bar-overlay"></div>
+
+      <!-- Player cover + metadata -->
+      <div class="player-info" :class="{ hidden: !isCurrentSongVisible }">
+        <img
+            class="player-cover-image"
+            :src="getImageUrlFromAudioSrc(artists[currentArtistIndex].audios[currentAudioIndex].src)"
+            alt="Cover"
+            @error="handleImageError"
+        />
+        <div class="player-meta">
+          <strong>{{ artists[currentArtistIndex].audios[currentAudioIndex].title }}</strong>
+          <div>{{ artists[currentArtistIndex].audios[currentAudioIndex].author }}</div>
+        </div>
+      </div>
+
+      <!-- Mobile: cover + meta above controls -->
+      <div class="mobile-meta-timeline">
+        <div class="player-meta">
+          <strong class="meta-title">{{ artists[currentArtistIndex].audios[currentAudioIndex].title }}</strong>
+          <div class="meta-artist">{{ artists[currentArtistIndex].audios[currentAudioIndex].author }}</div>
+        </div>
+        <div class="timeline-bar" @click="seek(currentArtistIndex, currentAudioIndex, $event)">
+          <div
+              class="timeline-progress"
+              :style="{ width: `${progress[currentArtistIndex]?.[currentAudioIndex] || 0}%` }"
+          ></div>
+        </div>
+      </div>
+
+      <div
+            class="controls"
+           :class="{ 'shifted': !isCurrentSongVisible }">
+
+        <button @click="prevSong">
+          <PrevSongIcon />
+        </button>
+
+        <button @click="seekRelative(-10)">
+          <Rewind10Icon />
+        </button>
+
+        <button class="main-play-btn" @click="togglePlay(currentArtistIndex, currentAudioIndex)">
+          <component
+              :is="isPlaying ? PauseIcon : PlayIcon"
+              size="44"
+          />
+        </button>
+
+        <button @click="seekRelative(10)">
+          <Forward10Icon />
+        </button>
+
+        <button @click="nextSong">
+          <NextSongIcon />
+        </button>
+
+      </div>
+<!--      <div class="space"></div>-->
+    </div>
+  </div>
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, watch, ref, nextTick, computed  } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import * as Arobi from '~/data/audios.js'
 import * as Iska from '~/data/audiosIska.js'
 import * as SykeIska from '~/data/audiosSykeIska.js'
 import * as Zumer from '~/data/audiosZumer.js'
-import { parseBlob } from 'music-metadata'
+import PlayIcon from '~/components/PlayIcon.vue'
+import PauseIcon from '~/components/PauseIcon.vue'
+import Forward10Icon from '~/components/Forward10Icon.vue'
+import Rewind10Icon from '~/components/Rewind10Icon.vue'
+import NextSongIcon from '~/components/NextSongIcon.vue'
+import PrevSongIcon from '~/components/PrevSongIcon.vue'
 
-function shuffleArray(arr) {
-    const array = [...arr]
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[array[i], array[j]] = [array[j], array[i]]
-    }
-    return array
-}
 
+
+/* --- Reactive State --- */
 const artists = ref([
-    { name: Arobi.artist, audios: shuffleArray(Arobi.audios) },
-    { name: Iska.artist, audios: shuffleArray(Iska.audios) },
-    { name: SykeIska.artist, audios: shuffleArray(SykeIska.audios) },
-    { name: Zumer.artist, audios: shuffleArray(Zumer.audios) },
+  { name: Arobi.artist, audios:  Arobi.audios },
+  { name: Iska.artist, audios:  Iska.audios },
+  { name: SykeIska.artist, audios:  SykeIska.audios },
+  { name: Zumer.artist, audios:  Zumer.audios },
 ])
 
-const selectedArtist = ref(null)
-const audioRefs = ref([])
+const selectedArtistIndex = ref(null)
+const currentArtistIndex = ref(null)
 const currentAudioIndex = ref(null)
 const isPlaying = ref(false)
-const copiedIndex = ref(null)
-const isCurrentSongVisible = ref(true)
-const songRefs = ref([])
-const coverImages = ref({})
 const progress = ref([])
+const audioRefs = ref({})
+const songRefs = ref({})
+const isCurrentSongVisible = ref(false)
 const fallbackImage = 'https://picsum.photos/seed/picsum/200/300'
-function updateProgress(index) {
-    const audio = audioRefs.value[index]
-    if (audio && audio.duration) {
-        progress.value[index] = (audio.currentTime / audio.duration) * 100
-    }
-}
-
-function seek(index, event) {
-    const audio = audioRefs.value[index]
-    if (!audio) return
-
-    const bar = event.currentTarget
-    const clickX = event.offsetX
-    const barWidth = bar.clientWidth
-    const newTime = (clickX / barWidth) * audio.duration
-    audio.currentTime = newTime
-}
-
-
+const playerBgUrl = ref(fallbackImage)
+/* --- Artist Selection --- */
 function selectArtist(index) {
-    selectedArtist.value = artists.value[index]
-    currentAudioIndex.value = null
-    isPlaying.value = false
-
-    nextTick(() => {
-        audioRefs.value = document.querySelectorAll('audio')
-        progress.value = selectedArtist.value.audios.map(() => 0)
-    })
-
-    copiedIndex.value = null
+  selectedArtistIndex.value = index
+  currentAudioIndex.value = null
+  isPlaying.value = false
+  nextTick(() => {
+    if (!progress.value[index]) progress.value[index] = artists.value[index].audios.map(() => 0)
+  })
 }
 
-const playerBg = computed(() => {
-    if (!selectedArtist.value || currentAudioIndex.value === null) return fallbackImage
+/* --- Audio Controls --- */
+function setAudioRef(el, artistIndex, audioIndex) {
+  if (!audioRefs.value[artistIndex]) audioRefs.value[artistIndex] = []
+  audioRefs.value[artistIndex][audioIndex] = el
+}
 
-    const img = getImageUrlFromAudioSrc(selectedArtist.value.audios[currentAudioIndex.value].src)
-    // Just return fallback if img is falsy
-    return img || fallbackImage
-})
+function setSongRef(el, artistIndex, audioIndex) {
+  if (!songRefs.value[artistIndex]) songRefs.value[artistIndex] = []
+  songRefs.value[artistIndex][audioIndex] = el
+}
 
+function togglePlay(artistIndex, audioIndex) {
+  const audio = audioRefs.value[artistIndex]?.[audioIndex]
+  if (!audio) return
 
-async function togglePlay(index) {
-    await nextTick()
-    const selectedAudio = audioRefs.value[index]
-    if (!selectedAudio) return
-
-    if (currentAudioIndex.value !== null && currentAudioIndex.value !== index) {
-        const currentAudio = audioRefs.value[currentAudioIndex.value]
-        if (currentAudio) {
-            currentAudio.pause()
-            currentAudio.currentTime = 0
-        }
-    }
-
-    if (currentAudioIndex.value === index && isPlaying.value) {
-        selectedAudio.pause()
-        isPlaying.value = false
+  // If it's the currently playing one → just toggle play/pause
+  if (
+      currentArtistIndex.value === artistIndex &&
+      currentAudioIndex.value === audioIndex
+  ) {
+    if (isPlaying.value) {
+      audio.pause()
+      isPlaying.value = false
     } else {
-        selectedAudio.play()
-        currentAudioIndex.value = index
-        isPlaying.value = true
+      audio.play().catch(err => console.warn('Playback failed:', err))
+      isPlaying.value = true
     }
+    return
+  }
+
+  // Otherwise, stop everything else (reset their times)
+  pauseAllAudios(true)
+
+  // Start the new one from beginning
+  audio.currentTime = 0
+  audio.play().catch(err => console.warn('Playback failed:', err))
+  isPlaying.value = true
+  currentArtistIndex.value = artistIndex
+  currentAudioIndex.value = audioIndex
+}
+
+function pauseAllAudios(reset = false) {
+  for (const artistList of Object.values(audioRefs.value)) {
+    for (const audio of artistList || []) {
+      if (audio && !audio.paused) {
+        audio.pause()
+        if (reset) audio.currentTime = 0
+      }
+    }
+  }
+}
+
+
+function handleImageError(event) {
+  event.target.src = fallbackImage
+}
+
+function checkIfCurrentSongVisible() {
+  if (currentAudioIndex.value === null || currentArtistIndex.value === null) {
+    isCurrentSongVisible.value = true // show metadata if no song is selected
+    return
+  }
+
+  const songEl = songRefs.value[currentArtistIndex.value]?.[currentAudioIndex.value]
+  if (!songEl) {
+    isCurrentSongVisible.value = true // show metadata if element missing
+    return
+  }
+
+  const rect = songEl.getBoundingClientRect()
+  const isVisible = rect.bottom > 0 && rect.top < window.innerHeight
+  isCurrentSongVisible.value = !isVisible // ❌ opposite logic
+}
+
+
+
+
+function updateProgress(artistIndex, audioIndex) {
+  const audio = audioRefs.value[artistIndex]?.[audioIndex]
+  if (audio && audio.duration) {
+    if (!progress.value[artistIndex]) progress.value[artistIndex] = []
+    progress.value[artistIndex][audioIndex] = (audio.currentTime / audio.duration) * 100
+  }
+}
+
+function seek(artistIndex, audioIndex, event) {
+  const audio = audioRefs.value[artistIndex]?.[audioIndex]
+  if (!audio) return
+  const bar = event.currentTarget
+  const clickX = event.offsetX
+  const newTime = (clickX / bar.clientWidth) * audio.duration
+  audio.currentTime = newTime
 }
 
 function onEnded() {
-    const currentIndex = currentAudioIndex.value
-
-    // Check if there is a next song
-    if (
-        currentIndex !== null &&
-        selectedArtist.value &&
-        currentIndex + 1 < selectedArtist.value.audios.length
-    ) {
-        const nextIndex = currentIndex + 1
-        currentAudioIndex.value = nextIndex
-        isPlaying.value = true
-
-        nextTick(() => {
-            const nextAudio = audioRefs.value[nextIndex]
-            if (nextAudio) {
-                nextAudio.play()
-            }
-        })
-    } else {
-        // End of playlist
-        isPlaying.value = false
-        currentAudioIndex.value = null
-    }
-}
-
-
-function seekRelative(seconds) {
-    const current = audioRefs.value[currentAudioIndex.value]
-    if (current) {
-        current.currentTime = Math.min(
-            Math.max(current.currentTime + seconds, 0),
-            current.duration
-        )
-    }
+  nextSong()
 }
 
 function nextSong() {
-    const next = currentAudioIndex.value + 1
-    if (
-        selectedArtist.value &&
-        next < selectedArtist.value.audios.length
-    ) {
-        togglePlay(next)
-    }
+  if (currentArtistIndex.value === null || currentAudioIndex.value === null) return
+  const nextIndex = currentAudioIndex.value + 1
+  const audios = artists.value[currentArtistIndex.value].audios
+  if (nextIndex < audios.length) {
+    togglePlay(currentArtistIndex.value, nextIndex)
+  } else {
+    isPlaying.value = false
+  }
 }
 
 function prevSong() {
-    const prev = currentAudioIndex.value - 1
-    if (prev >= 0) {
-        togglePlay(prev)
-    }
+  if (currentArtistIndex.value === null || currentAudioIndex.value === null) return
+  const prevIndex = currentAudioIndex.value - 1
+  if (prevIndex >= 0) {
+    togglePlay(currentArtistIndex.value, prevIndex)
+  }
 }
 
-
-function checkIfCurrentSongVisible() {
-    if (currentAudioIndex.value === null) {
-        isCurrentSongVisible.value = true
-        return
-    }
-
-    const songEl = songRefs.value[currentAudioIndex.value]
-
-    if (!songEl) {
-        isCurrentSongVisible.value = true
-        return
-    }
-
-    const rect = songEl.getBoundingClientRect()
-    const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight
-    isCurrentSongVisible.value = isVisible
+function seekRelative(seconds) {
+  if (currentArtistIndex.value === null || currentAudioIndex.value === null) return
+  const current = audioRefs.value[currentArtistIndex.value]?.[currentAudioIndex.value]
+  if (current) {
+    current.currentTime = Math.min(Math.max(current.currentTime + seconds, 0), current.duration)
+  }
 }
-
-async function loadCoverImageFromMP3(audioUrl, index) {
-    try {
-        const response = await fetch(audioUrl)
-        const arrayBuffer = await response.arrayBuffer()
-        const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' })
-
-        const metadata = await parseBlob(blob)
-
-        const picture = metadata?.common?.picture?.[0]
-        if (picture) {
-            const base64String = btoa(
-                String.fromCharCode(...new Uint8Array(picture.data))
-            )
-            const imageUrl = `data:${picture.format};base64,${base64String}`
-            coverImages.value[index] = imageUrl
-        } else {
-            // No cover found, optional: set a fallback or skip
-            console.warn(`No cover found for index ${index}`)
-        }
-    } catch (error) {
-        console.error('Error extracting cover art:', error)
-    }
-}
-
-
-onMounted(() => {
-    window.addEventListener('scroll', checkIfCurrentSongVisible)
-})
-
-onUnmounted(() => {
-    window.removeEventListener('scroll', checkIfCurrentSongVisible)
-})
-
-const playerBgUrl = ref(fallbackImage)
-
-watch([selectedArtist, currentAudioIndex], async () => {
-    if (!selectedArtist.value || currentAudioIndex.value === null) {
-        playerBgUrl.value = fallbackImage
-        return
-    }
-
-    const url = getImageUrlFromAudioSrc(selectedArtist.value.audios[currentAudioIndex.value].src)
-
-    // Preload image
-    const img = new Image()
-    img.src = url
-    img.onload = () => playerBgUrl.value = url
-    img.onerror = () => playerBgUrl.value = fallbackImage
-})
-
-
-
-
-
-function setSongRef(el, index) {
-    if (el) {
-        songRefs.value[index] = el
-    }
-}
-
-
-function copySrc(src, index) {
-    navigator.clipboard.writeText(src).then(() => {
-        copiedIndex.value = index
-    }).catch(() => {})
-}
-
-
 
 function getImageUrlFromAudioSrc(audioSrc) {
-    if (!audioSrc) return ''
-    return audioSrc.replace('/songs/', '/images/').replace('.mp3', '.jpg')
-}
-
-function handleImageError(event) {
-    event.target.src = fallbackImage
+  if (!audioSrc) return ''
+  return audioSrc.replace('/songs/', '/images/').replace('.mp3', '.jpg')
 }
 
 
+/* --- Player Background --- */
+watch([currentArtistIndex, currentAudioIndex], async () => {
+  if (currentArtistIndex.value === null || currentAudioIndex.value === null) {
+    playerBgUrl.value = fallbackImage
+    return
+  }
 
+  const currentAudio = artists.value[currentArtistIndex.value].audios[currentAudioIndex.value]
+  const url = getImageUrlFromAudioSrc(currentAudio.src)
+  const img = new Image()
+  img.src = url
+  img.onload = () => (playerBgUrl.value = url)
+  img.onerror = () => (playerBgUrl.value = fallbackImage)
+})
+
+/* --- Mount Hooks --- */
 onMounted(() => {
-    window.addEventListener('scroll', checkIfCurrentSongVisible)
-    window.addEventListener('resize', checkIfCurrentSongVisible)
+  window.addEventListener('scroll', checkIfCurrentSongVisible)
+  window.addEventListener('resize', checkIfCurrentSongVisible)
 })
 
 onUnmounted(() => {
-    window.removeEventListener('scroll', checkIfCurrentSongVisible)
-    window.removeEventListener('resize', checkIfCurrentSongVisible)
+  window.removeEventListener('scroll', checkIfCurrentSongVisible)
+  window.removeEventListener('resize', checkIfCurrentSongVisible)
 })
+
 
 </script>
 
-
-
 <style scoped>
+.artist-list {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.artist-link {
+  cursor: pointer;
+  margin: 0.5rem 0;
+  color: #3b82f6;
+}
+
+.artist-link.active {
+  font-weight: bold;
+  color: #1d4ed8;
+}
+
+.eventContent__audio {
+  margin-bottom: 1rem;
+}
+
+.timeline-bar {
+  background: #ddd;
+  height: 4px;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.timeline-progress {
+  height: 100%;
+  background: #3b82f6;
+  transition: width 0.1s;
+}
+
+.player-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 120px 16px;
+  z-index: 999;
+  background: transparent; /* base is now fully transparent */
+}
+.player-bar-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0; /* behind the content */
+  background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.6) 0%,  /* bottom darker, visible */
+      rgba(0, 0, 0, 0) 100%   /* top fully transparent */
+  );
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+}
+
+
+
+
+.player-bar > * {
+  position: relative; /* content above overlay */
+  z-index: 1;
+}
+
+
+/* Mobile adjustments */
+@media (max-width: 720px) {
+  .player-bar {
+    flex-direction: column;
+    padding: 8px;
+  }
+}
+
+
+
+
 
 .artist-list {
     max-width: 1100px;
@@ -552,6 +571,21 @@ onUnmounted(() => {
 }
 
 /* Player bar (fixed) */
+.player-bar2 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.6); /* solid dark base so buttons stay visible */
+  overflow: hidden;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+}
 
 .player-bar {
     position: fixed;
@@ -569,57 +603,60 @@ onUnmounted(() => {
 }
 
 .player-bar-overlay {
-    position: absolute;
-    inset: 0;
-    backdrop-filter: blur(2px);
-    background: rgba(0,0,0,0.5);
-    z-index: -1; /* <- move behind .player-bar content */
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none; /* allow clicks on buttons */
+  background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0) 50%
+  );
+  mix-blend-mode: multiply; /* blends with content underneath */
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
 }
+
 
 
 
 /* Player info (cover + meta) */
 .player-info {
-    display: flex;
-    align-items: center;
-    margin-right: auto;
-    opacity: 0;
-    transform: translateX(-20px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
-.player-info.visible {
-    opacity: 1;
-    transform: translateX(0);
-    pointer-events: auto;
+
+.player-info.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px); /* subtle move when hidden */
 }
+
 .player-cover-image {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin-right: 10px;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
 }
+
 .player-meta {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-.meta-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    color: white;
+
+.player-meta strong {
+  font-weight: 600;
+  color: white;
 }
-.meta-artist {
-    font-size: 0.8rem;
-    color: #ccc;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+
+.player-meta div {
+  font-size: 0.85rem;
+  color: #ccc;
 }
+
 
 /* Player controls */
 .controls {
@@ -659,38 +696,57 @@ onUnmounted(() => {
    RESPONSIVENESS
 ------------------- */
 
-
 @media (max-width: 720px) {
-    .player-info {
-        display: none; /* hide cover + metadata */
-    }
+  /* Show mobile meta above controls */
+  .mobile-meta-timeline {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 0 10px;
+  }
 
-    .space {
-        display: none; /* remove spacing helper */
-    }
+  .mobile-meta-timeline .meta-title {
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+  }
 
-    .player-bar {
-        flex-direction: column;   /* stack vertically */
-        align-items: center;
-        justify-content: flex-start;
-        height: auto;             /* grow as needed */
-        padding: 8px 0;
-    }
+  .mobile-meta-timeline .meta-artist {
+    font-size: 0.85rem;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 6px;
+  }
 
-    .mobile-meta-timeline {
-        order: -1;                /* force above controls */
-        width: 100%;
-        margin-bottom: 6px;
-    }
+  /* Timeline smaller on mobile */
+  .mobile-meta-timeline .timeline-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+  }
 
-    .controls {
-        position: relative;       /* remove absolute overlap */
-        left: auto;
-        transform: none;
-        margin: 0 auto;
-        gap: 10px;
-    }
+  .mobile-meta-timeline .timeline-progress {
+    background-color: #fff;
+  }
+
+  /* Hide desktop player-info on mobile */
+  .player-info {
+    display: none;
+  }
+
+  .player-bar {
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+  }
 }
+
 
 
 

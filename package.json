@@ -10,8 +10,10 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/content": "^3.7.1",
+    "@iconify-json/lucide": "^1.2.71",
+    "@iconify-json/material-symbols": "^1.2.44",
     "@nuxt/eslint": "^1.9.0",
+    "@nuxt/icon": "^2.1.0",
     "@nuxt/image": "^1.11.0",
     "@nuxt/test-utils": "^3.19.2",
     "@nuxt/ui": "^4.0.0",
@@ -19,6 +21,7 @@
     "eslint": "^9.36.0",
     "music-metadata": "^11.9.0",
     "nuxt": "^4.1.2",
+    "pnpm": "^10.20.0",
     "typescript": "^5.9.2",
     "vue": "^3.5.22",
     "vue-router": "^4.5.1"
