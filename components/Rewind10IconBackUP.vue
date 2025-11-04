@@ -1,59 +1,60 @@
-<script setup lang="ts">
-import PauseIcon from "~/components/PauseIcon.vue";
-import PlayIcon from "~/components/PlayIcon.vue";
-import Rewind10Icon from "~/components/Rewind10Icon.vue";
-import Forward10Icon from "~/components/Forward10Icon.vue";
-import PrevSongIcon from "~/components/PrevSongIcon.vue";
-import NextSongIcon from "~/components/NextSongIcon.vue";
-
-defineProps<{ size?: number | string }>()
-</script>
-
 <template>
-  <div class="controls">
+  <div class="artist-page">
+    <!-- Sidebar with artists -->
+    <aside class="artist-sidebar" v-if="selectedArtistIndex !== null">
+      <h2>🎧 Artists</h2>
+      <ul>
+        <li
+            v-for="(artist, index) in artists"
+            :key="index"
+            @click="selectArtist(index)"
+            class="artist-link"
+            :class="{ active: selectedArtistIndex === index }"
+        >
+          {{ artist.name }}
+        </li>
+      </ul>
+    </aside>
 
-    <button @click="prevSong"><PrevSongIcon size="28" /></button>
-    <!--        <button @click="prevSong"><Icon name="material-symbols:skip-previous-rounded" size="28" /></button>-->
-    <button @click="seekRelative(-10)">
-      <Rewind10Icon size="28" />
-    </button>
+    <!-- Main Content -->
+    <div class="artist-main">
+      <h1 v-if="selectedArtistIndex === null">🎧 Artist Library</h1>
 
-    <button class="main-play-btn" @click="togglePlay(currentArtistIndex, currentAudioIndex)">
-      <component :is="isPlaying ? PauseIcon : PlayIcon" size="44" />
-    </button>
+      <!-- Initial list (before selecting) -->
+      <ul v-if="selectedArtistIndex === null">
+        <li
+            v-for="(artist, index) in artists"
+            :key="index"
+            @click="selectArtist(index)"
+            class="artist-link"
+            :class="{ active: selectedArtistIndex === index }"
+        >
+          {{ artist.name }}
+        </li>
+      </ul>
 
-    <button @click="seekRelative(10)">
-      <Forward10Icon size="28" />
-    </button>
+      <!-- Songs for selected artist -->
+      <div
+          v-for="(artist, artistIndex) in artists"
+          :key="'artist-' + artistIndex"
+          class="artist-songs"
+          v-show="selectedArtistIndex === artistIndex"
+      >
+        <h2>{{ artist.name }}'s Songs</h2>
 
-    <!--        <button @click="seekRelative(-10)"><Icon name="material-symbols:replay-10-rounded" size="28" /></button>-->
-    <!--        <button class="main-play-btn" @click="togglePlay(currentArtistIndex, currentAudioIndex)">-->
-    <!--          <Icon-->
-    <!--              :name="isPlaying ? 'material-symbols:pause-circle-rounded' : 'material-symbols:play-circle-rounded'"-->
-    <!--              size="44"-->
-    <!--          />-->
-    <!--        </button>-->
-    <!--        <button @click="seekRelative(10)"><Icon name="material-symbols:forward-10-rounded" size="28" /></button>-->
-    <!--        <button @click="nextSong"><Icon name="material-symbols:skip-next-rounded" size="28" /></button>-->
-    <button @click="nextSong"><NextSongIcon size="28" /></button>
+        <div
+            v-for="(audio, index) in artist.audios"
+            :key="'audio-' + artistIndex + '-' + index"
+            class="eventContent__audio"
+            :ref="el => setSongRef(el, artistIndex, index)"
+        >
+          <!-- existing audio row & timeline here -->
+          <!-- ... your same play button and audio meta ... -->
+        </div>
+      </div>
+    </div>
+
+    <!-- keep your bottom player -->
+    <!-- (no change to your player-bar or logic) -->
   </div>
-  <div class="controls">
-
-    <button @click="prevSong"><Icon name="material-symbols:skip-previous-rounded" size="28" /></button>
-
-    <button @click="seekRelative(-10)"><Icon name="material-symbols:replay-10-rounded" size="28" /></button>
-
-    <button class="main-play-btn" @click="togglePlay(currentArtistIndex, currentAudioIndex)">
-      <Icon
-          :name="isPlaying ? 'material-symbols:pause-circle-rounded' : 'material-symbols:play-circle-rounded'"
-          size="44"
-      />
-    </button>
-
-    <button @click="seekRelative(10)"><Icon name="material-symbols:forward-10-rounded" size="28" /></button>
-
-    <button @click="nextSong"><Icon name="material-symbols:skip-next-rounded" size="28" /></button>
-  </div>
-
-
 </template>

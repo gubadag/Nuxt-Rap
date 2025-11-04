@@ -1,18 +1,37 @@
 <template>
-  <div class="artist-list">
-    <h1>🎧 Artist Library</h1>
+  <div class="artist-page">
+    <aside class="artist-sidebar" v-if="selectedArtistIndex !== null">
+      <h2>🎧 Artists</h2>
+      <ul>
+        <li
+            v-for="(artist, index) in artists"
+            :key="index"
+            @click="selectArtist(index)"
+            class="artist-link"
+            :class="{ active: selectedArtistIndex === index }"
+        >
+          {{ artist.name }}
+        </li>
+      </ul>
+    </aside>
 
-    <ul>
-      <li
-          v-for="(artist, index) in artists"
-          :key="index"
-          @click="selectArtist(index)"
-          class="artist-link"
-          :class="{ active: selectedArtistIndex === index }"
-      >
-        {{ artist.name }}
-      </li>
-    </ul>
+    <!-- Main Content -->
+    <div class="artist-main">
+      <h1 v-if="selectedArtistIndex === null">🎧 Artist Library</h1>
+
+      <!-- Initial list (before selecting) -->
+      <ul v-if="selectedArtistIndex === null">
+        <li
+            v-for="(artist, index) in artists"
+            :key="index"
+            @click="selectArtist(index)"
+            class="artist-link"
+            :class="{ active: selectedArtistIndex === index }"
+        >
+          {{ artist.name }}
+        </li>
+      </ul>
+
 
     <!-- All artists' songs pre-rendered but hidden visually -->
     <div
@@ -88,9 +107,10 @@
       </div>
     </div>
 
+
+
     <!-- Fixed Bottom Player -->
     <div v-if="currentArtistIndex !== null && currentAudioIndex !== null" class="player-bar">
-
       <div class="player-bar-overlay"></div>
 
       <!-- Player cover + metadata -->
@@ -107,7 +127,7 @@
         </div>
       </div>
 
-      <!-- Mobile: cover + meta above controls -->
+      <!-- Mobile meta + timeline -->
       <div class="mobile-meta-timeline">
         <div class="player-meta">
           <strong class="meta-title">{{ artists[currentArtistIndex].audios[currentAudioIndex].title }}</strong>
@@ -121,37 +141,23 @@
         </div>
       </div>
 
-      <div
-            class="controls"
-           :class="{ 'shifted': !isCurrentSongVisible }">
-
-        <button @click="prevSong">
-          <PrevSongIcon />
-        </button>
-
-        <button @click="seekRelative(-10)">
-          <Rewind10Icon />
-        </button>
-
+      <!-- Controls -->
+      <div class="controls" :class="{ 'shifted': !isCurrentSongVisible }">
+        <button @click="prevSong"><PrevSongIcon /></button>
+        <button @click="seekRelative(-10)"><Rewind10Icon /></button>
         <button class="main-play-btn" @click="togglePlay(currentArtistIndex, currentAudioIndex)">
-          <component
-              :is="isPlaying ? PauseIcon : PlayIcon"
-              size="44"
-          />
+          <component :is="isPlaying ? PauseIcon : PlayIcon" size="44" />
         </button>
-
-        <button @click="seekRelative(10)">
-          <Forward10Icon />
-        </button>
-
-        <button @click="nextSong">
-          <NextSongIcon />
-        </button>
-
+        <button @click="seekRelative(10)"><Forward10Icon /></button>
+        <button @click="nextSong"><NextSongIcon /></button>
       </div>
-<!--      <div class="space"></div>-->
     </div>
-  </div>
+    <!-- Gradient Transparent Overlay Above Player -->
+    <div v-if="currentArtistIndex !== null && currentAudioIndex !== null" class="player-bar-second">
+      <div class="player-bar-overlay-second"></div>
+    </div>
+
+    </div>></div>
 </template>
 
 <script setup>
@@ -268,7 +274,7 @@ function checkIfCurrentSongVisible() {
 
   const rect = songEl.getBoundingClientRect()
   const isVisible = rect.bottom > 0 && rect.top < window.innerHeight
-  isCurrentSongVisible.value = !isVisible // ❌ opposite logic
+  isCurrentSongVisible.value = !isVisible
 }
 
 
@@ -358,6 +364,119 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.artist-page {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Sidebar (shows after selecting artist) */
+.artist-sidebar {
+  width: 220px;
+  background: #f4f6ff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
+.artist-sidebar h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.artist-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.artist-main {
+  flex: 1;
+}
+
+/* Mobile view: stack sidebar on top */
+@media (max-width: 768px) {
+  .artist-page {
+    flex-direction: column;
+  }
+
+  .artist-sidebar {
+    width: 100%;
+    position: static;
+  }
+}
+
+
+.player-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  z-index: 998; /* stays below the fade */
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+
+.player-bar-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(2px);
+  background: rgba(0,0,0,0.4);
+  z-index: -1; /* <- move behind .player-bar content */
+}
+
+
+
+/* Player bar (fixed) */
+
+.player-bar-second {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.player-bar-overlay-second {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background-color: rgba(0, 0, 0, 0.4); /* solid color base */
+  opacity: 0.8;
+
+  /* Gradient transparency upward */
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 .artist-list {
   max-width: 600px;
   margin: 0 auto;
@@ -393,39 +512,7 @@ onUnmounted(() => {
   transition: width 0.1s;
 }
 
-.player-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 120px 16px;
-  z-index: 999;
-  background: transparent; /* base is now fully transparent */
-}
-.player-bar-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 0; /* behind the content */
-  background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.6) 0%,  /* bottom darker, visible */
-      rgba(0, 0, 0, 0) 100%   /* top fully transparent */
-  );
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-}
 
-
-
-
-.player-bar > * {
-  position: relative; /* content above overlay */
-  z-index: 1;
-}
 
 
 /* Mobile adjustments */
@@ -570,53 +657,6 @@ onUnmounted(() => {
     transition: width 0.1s linear, opacity 0.3s ease;
 }
 
-/* Player bar (fixed) */
-.player-bar2 {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  z-index: 999;
-  background: rgba(0, 0, 0, 0.6); /* solid dark base so buttons stay visible */
-  overflow: hidden;
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-}
-
-.player-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 16px;
-    z-index: 999;
-    background-size: cover;
-    background-position: center;
-    overflow: hidden;
-}
-
-.player-bar-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none; /* allow clicks on buttons */
-  background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.6) 0%,
-      rgba(0, 0, 0, 0) 50%
-  );
-  mix-blend-mode: multiply; /* blends with content underneath */
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-}
-
 
 
 
@@ -645,6 +685,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  color: white; /* or a light color */
+  fill: white;
 }
 
 .player-meta strong {
@@ -682,7 +724,8 @@ onUnmounted(() => {
     background: none;
     border: none;
     cursor: pointer;
-    color: white;
+    color: white; /* or a light color */
+    fill: white;
     transition: transform 0.2s ease;
 }
 .controls button:hover {
