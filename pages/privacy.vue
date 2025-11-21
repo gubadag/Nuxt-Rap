@@ -1,124 +1,121 @@
 <template>
   <main class="privacy-page">
     <article class="card">
-      <h1>TmRap RETRO — Privacy Policy</h1>
+      <h1>TmRap RETRO — Политика конфиденциальности</h1>
 
-      <p class="muted">Last updated: October 13, 2025</p>
+      <p class="muted">Последнее обновление: 13 октября 2025 г.</p>
 
       <section>
-        <h2>Introduction</h2>
+        <h2>Введение</h2>
         <p>
-          TmRap RETRO ("we", "us", or "our") respects your privacy and is committed to protecting it.
-          This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use
-          the TmRap RETRO mobile application ("App") and the web version of TmRap RETRO ("Website").
-          By using either version, you agree to the collection and use of information as described in this policy.
+          TmRap RETRO («мы», «нас» или «наш») уважает вашу конфиденциальность и стремится её защищать.
+          Настоящая Политика конфиденциальности объясняет, как мы собираем, используем, раскрываем и защищаем вашу информацию при использовании
+          мобильного приложения TmRap RETRO («Приложение») и веб-версии TmRap RETRO («Веб-сайт»).
+          Используя любую из версий, вы соглашаетесь на сбор и использование информации, описанные в этой политике.
         </p>
       </section>
 
       <section>
-        <h2>Information We Collect</h2>
+        <h2>Информация, которую мы собираем</h2>
         <ul>
-          <li><strong>Device and usage data</strong> — device type, OS version, app version, language, and app usage statistics.</li>
-          <li><strong>Network & performance data</strong> — network connection info, error/crash reports, and performance metrics.</li>
-          <li><strong>Advertising identifiers</strong> — advertising IDs for ads served via Google AdMob (mobile) or cookies for Google AdSense (web).</li>
-          <li><strong>Audio/Media</strong> — the app plays audio streams; we do not upload or analyze personal audio from your device.</li>
+          <li><strong>Данные устройства и использования</strong> — тип устройства, версия ОС, версия приложения, язык и статистика использования приложения.</li>
+          <li><strong>Сетевые и производительные данные</strong> — информация о сетевом подключении, отчёты об ошибках/сбоях и показатели производительности.</li>
+          <li><strong>Рекламные идентификаторы</strong> — рекламные ID для рекламы через Google AdMob (мобильная версия) или cookies для Google AdSense (веб-версия).</li>
+          <li><strong>Аудио/Мультимедиа</strong> — приложение воспроизводит аудиопотоки; мы не загружаем и не анализируем личные аудиофайлы с вашего устройства.</li>
         </ul>
       </section>
 
       <section>
-        <h2>How We Use Information</h2>
+        <h2>Как мы используем информацию</h2>
         <ul>
-          <li>To provide and maintain the App and Website features and user experience.</li>
-          <li>To serve personalized or non-personalized ads through our ad partners (e.g. Google AdMob and AdSense).</li>
-          <li>To analyze usage and improve the App and Website via analytics services and crash reporting.</li>
-          <li>To comply with legal obligations and protect our rights.</li>
+          <li>Для предоставления и поддержания функций Приложения и Веб-сайта, а также улучшения пользовательского опыта.</li>
+          <li>Для показа персонализированной или не персонализированной рекламы через наших рекламных партнёров (например, Google AdMob и AdSense).</li>
+          <li>Для анализа использования и улучшения Приложения и Веб-сайта с помощью аналитических сервисов и инструментов отчётности о сбоях.</li>
+          <li>Для соблюдения юридических обязательств и защиты наших прав.</li>
         </ul>
       </section>
 
       <section>
-        <h2>Third-Party Services</h2>
+        <h2>Сторонние сервисы</h2>
         <p>
-          We use third-party services that may collect information about you depending on how you use our Service.
-          These may include:
+          Мы используем сторонние сервисы, которые могут собирать информацию о вас в зависимости от того, как вы используете наш Сервис.
+          К ним могут относиться:
         </p>
         <ul>
           <li>
-            <strong>Google AdMob</strong> — used in the mobile app to serve advertisements.
-            AdMob may use your device’s advertising ID to provide personalized or non-personalized ads.
+            <strong>Google AdMob</strong> — используется в мобильном приложении для показа рекламы.
+            AdMob может использовать рекламный идентификатор вашего устройства для показа персонализированной или не персонализированной рекламы.
           </li>
           <li>
-            <strong>Google AdSense</strong> — used on the web version of TmRap RETRO to display ads.
-            AdSense may use cookies and similar technologies to deliver and measure ads.
+            <strong>Google AdSense</strong> — используется на веб-версии TmRap RETRO для отображения рекламы.
+            AdSense может использовать cookies и подобные технологии для показа и измерения эффективности рекламы.
           </li>
           <li>
-            <strong>Firebase / Google Analytics</strong> — for analytics and crash reporting (if enabled).
+            <strong>Firebase / Google Analytics</strong> — для аналитики и отчётов о сбоях (если включено).
           </li>
         </ul>
         <p>
-          These third parties have their own privacy policies, which we encourage you to review:
+          У этих сторонних сервисов есть собственные политики конфиденциальности, которые мы рекомендуем вам изучить:
         </p>
         <ul>
-          <li><a href="https://policies.google.com/technologies/ads" target="_blank">Google Advertising Policies</a></li>
-          <li><a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a></li>
+          <li><a href="https://policies.google.com/technologies/ads" target="_blank">Политики рекламы Google</a></li>
+          <li><a href="https://policies.google.com/privacy" target="_blank">Политика конфиденциальности Google</a></li>
         </ul>
       </section>
 
       <section>
-        <h2>Ads and Advertising Identifiers</h2>
+        <h2>Реклама и рекламные идентификаторы</h2>
         <p>
-          We display ads using Google AdMob (mobile) and Google AdSense (web).
-          These services may collect device identifiers or use cookies to serve and measure ads.
-          If you wish to opt out of personalized ads:
+          Мы показываем рекламу с помощью Google AdMob (мобильная версия) и Google AdSense (веб-версия).
+          Эти сервисы могут собирать идентификаторы устройства или использовать cookies для показа и измерения рекламы.
+          Если вы хотите отказаться от персонализированной рекламы:
         </p>
         <ul>
-          <li>For mobile: use your device settings to limit ad tracking.</li>
-          <li>For web: visit <a href="https://adssettings.google.com" target="_blank">Google Ads Settings</a> to manage your preferences.</li>
+          <li>На мобильных устройствах: используйте настройки устройства для ограничения отслеживания рекламы.</li>
+          <li>В браузере: посетите <a href="https://adssettings.google.com" target="_blank">Настройки рекламы Google</a>, чтобы управлять своими предпочтениями.</li>
         </ul>
       </section>
 
       <section>
-        <h2>Children</h2>
+        <h2>Дети</h2>
         <p>
-          The App and Website are not intended for children under 13.
-          We do not knowingly collect personal information from children under 13.
-          If you believe we have collected such information, please contact us and we will remove it.
+          Приложение и Веб-сайт не предназначены для детей младше 13 лет.
+          Мы сознательно не собираем личную информацию у детей младше 13 лет.
+          Если вы считаете, что мы собрали такую информацию, свяжитесь с нами — мы её удалим.
         </p>
       </section>
 
       <section>
-        <h2>Data Retention & Security</h2>
+        <h2>Хранение и безопасность данных</h2>
         <p>
-          We keep data only as long as necessary for the purposes described in this policy.
-          We implement reasonable technical and organizational measures to protect your information,
-          but no method of transmission or storage is completely secure.
+          Мы храним данные только столько времени, сколько необходимо для целей, описанных в этой политике.
+          Мы применяем разумные технические и организационные меры для защиты вашей информации,
+          однако ни один способ передачи или хранения данных не является полностью безопасным.
         </p>
       </section>
 
       <section>
-        <h2>Your Rights</h2>
+        <h2>Ваши права</h2>
         <p>
-          Depending on your jurisdiction, you may have rights to access, correct, or delete your personal information.
-          To exercise these rights, contact us at the email address below.
+          В зависимости от вашего законодательства вы можете иметь права на доступ, исправление или удаление вашей личной информации.
+          Чтобы воспользоваться этими правами, свяжитесь с нами по указанному ниже адресу электронной почты.
         </p>
       </section>
 
       <section>
-        <h2>Changes to This Privacy Policy</h2>
+        <h2>Изменения в этой Политике конфиденциальности</h2>
         <p>
-          We may update this Privacy Policy from time to time.
-          When we do, we will post the new version here with an updated "Last updated" date.
+          Мы можем время от времени обновлять эту Политику конфиденциальности.
+          При обновлении мы опубликуем новую версию здесь с изменённой датой «Последнее обновление».
         </p>
       </section>
-
-
-
 
     </article>
   </main>
 </template>
 
 <script setup lang="ts">
-// Static page — add localization or dynamic updates if needed later.
+// Статическая страница — при необходимости позже можно добавить локализацию или динамические обновления.
 </script>
 
 <style scoped>

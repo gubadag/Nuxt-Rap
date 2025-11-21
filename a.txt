@@ -1,0 +1,195 @@
+student1 () {
+  ady = "Aman";
+  familyasy = "Durdyyev";
+  yashy = 22;
+  print ady, familyasy, yashy;
+}
+
+student2 () {
+  ady2 = "Leyla";
+  familyasy2 = "Myradova";
+  yashy2 = 20;
+  print ady2, familyasy2, yashy2;
+  student1 ();
+}
+
+student3 () {
+  ady3 = "Begench";
+  familyasy3 = "Orazov";
+  yashy3 = 23;
+  print ady3, familyasy3, yashy3;
+}
+
+student4 () {
+  ady4 = "Aygul";
+  familyasy4 = "Hojayeva";
+  yashy4 = 21;
+  print ady4, familyasy4, yashy4;
+}
+
+student5 ()  {
+  ady5 = "Nury";
+  familyasy5 = "Atayev";
+  yashy5 = 24;
+  print ady5, familyasy5, yashy5;
+}
+
+student6 () {
+  ady6 = "Gulshan";
+  familyasy6 = "Annayeva";
+  yashy6 = 19;
+  print ady6, familyasy6, yashy6;
+}
+
+student7 () {
+  ady7 = "Serdar";
+  familyasy7 = "Rejepov";
+  yashy7 = 25;
+  print ady7, familyasy7, yashy7;
+}
+
+student8 () {
+  ady8 = "Maral";
+  familyasy8 = "Durdyyeva";
+  yashy8 = 22;
+  print ady8, familyasy8, yashy8;
+}
+
+student9 () {
+  ady9 = "Yhlas";
+  familyasy9 = "Saparov";
+  yashy9 = 23;
+  print ady9, familyasy9, yashy9;
+}
+
+student10 () {
+  ady10 = "Aknur";
+  familyasy10 = "Batyrklycheva";
+  yashy10 = 21;
+  print ady10, familyasy10, yashy10;
+}
+
+student11 () {
+  ady11 = "Maksat";
+  familyasy11 = "Orazmyradov";
+  yashy11 = 24;
+  print ady11, familyasy11, yashy11;
+}
+
+student12 () {
+  ady12 = "Selbi";
+  familyasy12 = "Taganova";
+  yashy12 = 20;
+  print ady12, familyasy12, yashy12;
+}
+
+student13 () {
+  ady13 = "Rejep";
+  familyasy13 = "Gurbanov";
+  yashy13 = 26;
+  print ady13, familyasy13, yashy13;
+}
+
+student14 () {
+  ady14 = "Ayna";
+  familyasy14 = "Myratova";
+  yashy14 = 19;
+  print ady14, familyasy14, yashy14;
+}
+
+student15 () {
+  ady15 = "Bairam";
+  familyasy15 = "Hudayberdiyev";
+  yashy15 = 22;
+  print ady15, familyasy15, yashy15;
+}
+
+student16 () {
+  ady16 = "Dursun";
+  familyasy16 = "Atayeva";
+  yashy16 = 23;
+  print ady16, familyasy16, yashy16;
+}
+
+student17 () {
+  ady17 = "Azat";
+  familyasy17 = "Sopyyev";
+  yashy17 = 21;
+  print ady17, familyasy17, yashy17;
+}
+
+student18 () {
+  ady18 = "Meýlis";
+  familyasy18 = "Yakubov";
+  yashy18 = 24;
+  print ady18, familyasy18, yashy18;
+}
+
+student19 () {
+  ady19 = "Gulnabat";
+  familyasy19 = "Nurmuhammedova";
+  yashy19 = 20;
+  print ady19, familyasy19, yashy19;
+}
+
+student20 () {
+  ady20 = "Batyr";
+  familyasy20 = "Mammedov";
+  yashy20 = 25;
+  print ady20, familyasy20, yashy20;
+}
+
+student1();
+student2();
+student3();
+student4();
+student5();
+student6();
+student7();
+student8();
+student9();
+student10();
+student11();
+student12();
+student13();
+student14();
+student15();
+student16();
+student17();
+student18();
+student19();
+student20();
+
+
+
+
+
+
+
+
+student(ady, familyasy, yashy) {
+print ady, familyasy, yashy;
+}
+
+main() {
+student("Aman", "Durdyyev", 22);
+student("Leyla", "Myradova", 20);
+student("Begench", "Orazov", 23);
+student("Aygul", "Hojayeva", 21);
+student("Nury", "Atayev", 24);
+student("Gulshan", "Annayeva", 19);
+student("Serdar", "Rejepov", 25);
+student("Maral", "Durdyyeva", 22);
+student("Yhlas", "Saparov", 23);
+student("Aknur", "Batyrklycheva", 21);
+student("Maksat", "Orazmyradov", 24);
+student("Selbi", "Taganova", 20);
+student("Rejep", "Gurbanov", 26);
+student("Ayna", "Myratova", 19);
+student("Bairam", "Hudayberdiyev", 22);
+student("Dursun", "Atayeva", 23);
+student("Azat", "Sopyyev", 21);
+student("Meýlis", "Yakubov", 24);
+student("Gulnabat", "Nurmuhammedova", 20);
+student("Batyr", "Mammedov", 25);
+}

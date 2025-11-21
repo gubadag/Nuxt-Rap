@@ -1,0 +1,24 @@
+student(ady, familyasy, yashy) {
+    print ady, familyasy, yashy;
+}
+
+student("Aman", "Durdyyev", 22);
+student("Leyla", "Myradova", 20);
+student("Begench", "Orazov", 23);
+student("Aygul", "Hojayeva", 21);
+student("Nury", "Atayev", 24);
+student("Gulshan", "Annayeva", 19);
+student("Serdar", "Rejepov", 25);
+student("Maral", "Durdyyeva", 22);
+student("Yhlas", "Saparov", 23);
+student("Aknur", "Batyrklycheva", 21);
+student("Maksat", "Orazmyradov", 24);
+student("Selbi", "Taganova", 20);
+student("Rejep", "Gurbanov", 26);
+student("Ayna", "Myratova", 19);
+student("Bairam", "Hudayberdiyev", 22);
+student("Dursun", "Atayeva", 23);
+student("Azat", "Sopyyev", 21);
+student("Meýlis", "Yakubov", 24);
+student("Gulnabat", "Nurmuhammedova", 20);
+student("Batyr", "Mammedov", 25);
